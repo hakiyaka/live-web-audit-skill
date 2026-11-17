@@ -1,0 +1,146 @@
+[
+  {
+    "coverage_id": "GET%20http%3A%2F%2F127.0.0.1%3A8787%2F::cookie-attributes-and-reader::transport::TRANSPORT-AND-HEADERS.md%23Cookie%20attributes%20and%20scope",
+    "canonical_refs": {
+      "surface": "GET http://127.0.0.1:8787/",
+      "boundary": "cookie-attributes-and-reader",
+      "subsystem": "transport",
+      "attack_class": "TRANSPORT-AND-HEADERS.md#Cookie attributes and scope"
+    },
+    "surface": "Session cookie",
+    "boundary": "cookie attributes and reader",
+    "subsystem": "transport",
+    "attack_class": "Cookie attributes and scope",
+    "entry_points": [
+      "GET http://127.0.0.1:8787/"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Transport and header configuration",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "CACHE-AND-PROXY.md#Cache key",
+        "reason": "no CDN or shared cache header observed in this demo"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-demo",
+    "reviewed_surfaces": [
+      "GET http://127.0.0.1:8787/"
+    ],
+    "checks": [
+      {
+        "agent_id": "hunter-demo",
+        "reviewed_surfaces": [
+          "GET http://127.0.0.1:8787/"
+        ],
+        "invariant": "a session cookie is Secure, HttpOnly, and SameSite-scoped",
+        "method": "passive",
+        "result": "Set-Cookie: sid=<redacted>; Path=/ — no Secure, HttpOnly, or SameSite; headers: csp=missing, framing=missing, nosniff=missing, referrer-policy=missing, permissions-policy=missing, coop=missing, corp=missing, cache-control=present, vary=missing",
+        "artifact": "agents/hunter-demo/artifacts/home.json"
+      }
+    ],
+    "result_fingerprints": [
+      "127.0.0.1/insecure-session-cookie"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "GET%20http%3A%2F%2F127.0.0.1%3A8787%2Fadmin::anonymous-authorization-on-admin-route::admin::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "GET http://127.0.0.1:8787/admin",
+      "boundary": "anonymous-authorization-on-admin-route",
+      "subsystem": "admin",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "Admin route",
+    "boundary": "anonymous authorization on admin route",
+    "subsystem": "admin",
+    "attack_class": "Access control",
+    "entry_points": [
+      "GET http://127.0.0.1:8787/admin"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "CACHE-AND-PROXY.md#Cache key",
+        "reason": "no CDN or shared cache header observed in this demo"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-demo",
+    "reviewed_surfaces": [
+      "GET http://127.0.0.1:8787/admin"
+    ],
+    "checks": [
+      {
+        "agent_id": "hunter-demo",
+        "reviewed_surfaces": [
+          "GET http://127.0.0.1:8787/admin"
+        ],
+        "invariant": "the admin route requires an authenticated privileged identity",
+        "method": "passive",
+        "result": "anonymous GET /admin returned 200 with the admin body",
+        "artifact": "agents/hunter-demo/artifacts/admin.json"
+      }
+    ],
+    "result_fingerprints": [
+      "127.0.0.1/admin-unauthenticated"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "GET%20http%3A%2F%2F127.0.0.1%3A8787%2Fsearch%3Fq%3Dcoffee::html-encoding-of-reflected-input::search::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "GET http://127.0.0.1:8787/search?q=coffee",
+      "boundary": "html-encoding-of-reflected-input",
+      "subsystem": "search",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "Search results rendering",
+    "boundary": "html encoding of reflected input",
+    "subsystem": "search",
+    "attack_class": "Injection",
+    "entry_points": [
+      "GET http://127.0.0.1:8787/search?q=coffee"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [],
+    "excluded_blocks": [
+      {
+        "block": "CACHE-AND-PROXY.md#Cache key",
+        "reason": "no CDN or shared cache header observed in this demo"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "hunter-demo",
+    "reviewed_surfaces": [
+      "GET http://127.0.0.1:8787/search?q=%3Cb%3Eprobe%3C%2Fb%3E"
+    ],
+    "checks": [
+      {
+        "agent_id": "hunter-demo",
+        "reviewed_surfaces": [
+          "GET http://127.0.0.1:8787/search?q=%3Cb%3Eprobe%3C%2Fb%3E"
+        ],
+        "invariant": "a reflected query value is HTML-encoded before it reaches the body",
+        "method": "active",
+        "result": "the marker <b>probe</b> was returned unescaped inside <p>Results for ...</p> (status 200)",
+        "artifact": "agents/hunter-demo/artifacts/search-markup.json"
+      }
+    ],
+    "result_fingerprints": [
+      "127.0.0.1/search-reflected-xss"
+    ],
+    "unresolved": []
+  }
+]

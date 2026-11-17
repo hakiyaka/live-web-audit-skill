@@ -1,0 +1,24 @@
+{
+  "authorization": "operator states the basis here, verbatim: owner, written permission, or a bug-bounty program that covers these hosts",
+  "in_scope": [
+    {
+      "host": "shop.example.com",
+      "path_prefix": "/",
+      "schemes": ["https"],
+      "methods": ["GET", "HEAD", "OPTIONS"]
+    },
+    {
+      "host": "api.example.com",
+      "path_prefix": "/v1/",
+      "schemes": ["https"],
+      "methods": ["GET", "HEAD", "OPTIONS", "POST"]
+    }
+  ],
+  "out_of_scope": [
+    "payments.example.com",
+    "status.example.com",
+    "*.thirdparty-cdn.net"
+  ],
+  "max_rps": 1,
+  "max_requests": 400
+}

@@ -1,0 +1,26 @@
+{
+  "run_id": "demo-run-1",
+  "target": "http://127.0.0.1:8787",
+  "repo": "live-web-audit-skill",
+  "source_ref": "local demo server, no repository",
+  "profile": "quick",
+  "scope_paths": [
+    "http://127.0.0.1:8787"
+  ],
+  "authorization": "demo: the auditor starts this local server for the run",
+  "budget": {
+    "max_agents": 4,
+    "max_requests": 50
+  },
+  "execution_policy": "live-read-only",
+  "selected_companions": [
+    "INJECTION-AND-RENDERING.md",
+    "ACCESS-CONTROL.md",
+    "TRANSPORT-AND-HEADERS.md"
+  ],
+  "prior_runs": [],
+  "shared_file_owners": [
+    "parent"
+  ],
+  "run_status": "complete"
+}

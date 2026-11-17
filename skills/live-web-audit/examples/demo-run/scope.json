@@ -1,0 +1,16 @@
+{
+  "authorization": "demo: the auditor starts this local server for the run",
+  "in_scope": [
+    {
+      "host": "127.0.0.1",
+      "methods": [
+        "GET",
+        "HEAD",
+        "OPTIONS"
+      ]
+    }
+  ],
+  "out_of_scope": [],
+  "max_rps": 2,
+  "max_requests": 50
+}

@@ -1,0 +1,12 @@
+{
+  "name": "live-web-audit-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evidence-first security auditing of any live website: bounded probes, captured artifacts, independently replayed findings.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test validate-findings.test.cjs validate-coverage-ledger.test.cjs probes/probes.test.mjs",
+    "demo": "node examples/demo.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

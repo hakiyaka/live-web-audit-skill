@@ -1,0 +1,216 @@
+[
+  {
+    "verdict": "confirmed",
+    "fingerprint": "127.0.0.1/admin-unauthenticated",
+    "title": "Admin route renders its body for anonymous callers",
+    "description": "GET /admin returns the administrative page with user and refund counts without any identity.",
+    "root_cause": "The admin route has no server-side authentication check; the home page hides it only behind a link.",
+    "intended_behavior": "Only an authenticated administrator receives the admin page.",
+    "surface": "http://127.0.0.1:8787/admin",
+    "attack_class": "Access control",
+    "observations": [
+      {
+        "label": "admin",
+        "artifact": "agents/hunter-demo/artifacts/admin.json",
+        "observed_at": "2026-11-17T14:10:11Z",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8787/admin",
+          "headers": [
+            "User-Agent: live-web-audit/1.0.0"
+          ]
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            "Content-Type: text/html; charset=utf-8",
+            "Date: Tue, 17 Nov 2026 14:10:11 GMT",
+            "Connection: keep-alive",
+            "Keep-Alive: timeout=5",
+            "Transfer-Encoding: chunked"
+          ],
+          "body_excerpt": "<html><body><h1>Admin</h1><p>42 users, 7 refunds pending</p></body></html>"
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "kind": "authentication_level",
+        "description": "the caller sends no cookie or token"
+      }
+    ],
+    "reproduction": {
+      "actor": "anonymous visitor",
+      "steps": [
+        "request /admin without any cookie"
+      ],
+      "request": "curl -sS http://127.0.0.1:8787/admin",
+      "observed_result": "status 200 with the body <h1>Admin</h1><p>42 users, 7 refunds pending</p>"
+    },
+    "remediation": {
+      "strategy": "Enforce the administrator role on the server before rendering /admin, and redirect anonymous callers.",
+      "changes": [
+        {
+          "location": "GET /admin handler",
+          "change": "return 403 unless the session role is admin"
+        }
+      ]
+    },
+    "severity": {
+      "likelihood": {
+        "score": "high",
+        "reason": "one anonymous request is enough"
+      },
+      "impact": {
+        "score": "medium",
+        "reason": "the page discloses aggregate data, not per-user records"
+      },
+      "overall_severity": "medium"
+    },
+    "confidence": {
+      "score": "high",
+      "reason": "the anonymous capture returns the admin body"
+    }
+  },
+  {
+    "verdict": "needs_validation",
+    "fingerprint": "127.0.0.1/insecure-session-cookie",
+    "title": "Session cookie carries no Secure, HttpOnly, or SameSite attribute",
+    "description": "The site issues sid with Path=/ only. The demo has no TLS and no script injection of its own, so the reader of this cookie is not established here.",
+    "claimed_root_cause": "The cookie is written without transport, script, or cross-site scoping.",
+    "surface": "http://127.0.0.1:8787/",
+    "attack_class": "Cookie attributes and scope",
+    "observations": [
+      {
+        "label": "home",
+        "artifact": "agents/hunter-demo/artifacts/home.json",
+        "observed_at": "2026-11-17T14:10:11Z",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8787/",
+          "headers": [
+            "User-Agent: live-web-audit/1.0.0"
+          ]
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            "Content-Type: text/html; charset=utf-8",
+            "Set-Cookie: sid=<redacted>; Path=/",
+            "Cache-Control: public, max-age=60",
+            "Date: Tue, 17 Nov 2026 14:10:11 GMT",
+            "Connection: keep-alive",
+            "Keep-Alive: timeout=5",
+            "Transfer-Encoding: chunked"
+          ],
+          "body_excerpt": "<html><body><h1>Coffee Shop</h1><a href=/admin>Admin</a><form action=/search><input name=q></form></body></html>"
+        }
+      }
+    ],
+    "blockers": [
+      "the demo serves plain HTTP, so Secure cannot be observed in effect",
+      "no script-execution primitive was captured on this site"
+    ],
+    "validation_plan": {
+      "next_probe": "serve the same page over HTTPS and re-capture Set-Cookie to see whether Secure appears",
+      "owner_check": "confirm whether production sets Secure, HttpOnly, and SameSite at the edge or in the application"
+    }
+  },
+  {
+    "verdict": "confirmed",
+    "fingerprint": "127.0.0.1/search-reflected-xss",
+    "title": "Search query is reflected into the HTML body without encoding",
+    "description": "The value of q is concatenated into the results paragraph, so markup sent by a visitor is returned as markup.",
+    "root_cause": "The results template interpolates the raw query string into HTML instead of encoding it.",
+    "intended_behavior": "A query value is encoded for the context it is rendered into, so it appears as text, not markup.",
+    "surface": "http://127.0.0.1:8787/search?q=",
+    "attack_class": "Injection",
+    "observations": [
+      {
+        "label": "search-markup",
+        "artifact": "agents/hunter-demo/artifacts/search-markup.json",
+        "observed_at": "2026-11-17T14:10:12Z",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8787/search?q=%3Cb%3Eprobe%3C%2Fb%3E",
+          "headers": [
+            "User-Agent: live-web-audit/1.0.0"
+          ]
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            "Content-Type: text/html; charset=utf-8",
+            "Date: Tue, 17 Nov 2026 14:10:12 GMT",
+            "Connection: keep-alive",
+            "Keep-Alive: timeout=5",
+            "Transfer-Encoding: chunked"
+          ],
+          "body_excerpt": "<html><body><p>Results for <b>probe</b></p></body></html>"
+        }
+      },
+      {
+        "label": "search-plain",
+        "artifact": "agents/hunter-demo/artifacts/search-plain.json",
+        "observed_at": "2026-11-17T14:10:12Z",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8787/search?q=coffee",
+          "headers": [
+            "User-Agent: live-web-audit/1.0.0"
+          ]
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            "Content-Type: text/html; charset=utf-8",
+            "Date: Tue, 17 Nov 2026 14:10:12 GMT",
+            "Connection: keep-alive",
+            "Keep-Alive: timeout=5",
+            "Transfer-Encoding: chunked"
+          ],
+          "body_excerpt": "<html><body><p>Results for coffee</p></body></html>"
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "kind": "user_interaction",
+        "description": "a victim follows a crafted search link"
+      }
+    ],
+    "reproduction": {
+      "actor": "anonymous visitor",
+      "steps": [
+        "open the crafted search URL",
+        "read the returned body around Results for"
+      ],
+      "request": "curl -sS 'http://127.0.0.1:8787/search?q=%3Cb%3Eprobe%3C%2Fb%3E'",
+      "observed_result": "the response contains <p>Results for <b>probe</b></p>, so the marker is live markup"
+    },
+    "remediation": {
+      "strategy": "Encode the query value for HTML text at render time (escape <, >, &, \" and ') and add the site's CSP as defence in depth.",
+      "changes": [
+        {
+          "location": "search results renderer",
+          "change": "escape q before interpolation"
+        }
+      ]
+    },
+    "severity": {
+      "likelihood": {
+        "score": "high",
+        "reason": "the link is a normal GET a victim can be sent"
+      },
+      "impact": {
+        "score": "medium",
+        "reason": "script execution in the visitor's origin, no identity involved on this site"
+      },
+      "overall_severity": "medium"
+    },
+    "confidence": {
+      "score": "high",
+      "reason": "two captures show the exact unescaped marker in the body"
+    }
+  }
+]

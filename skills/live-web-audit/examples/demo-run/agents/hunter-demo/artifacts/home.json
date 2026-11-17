@@ -1,0 +1,33 @@
+{
+  "capture_version": 1,
+  "label": "home",
+  "observed_at": "2026-11-17T14:10:11Z",
+  "request": {
+    "method": "GET",
+    "url": "http://127.0.0.1:8787/",
+    "headers": [
+      "User-Agent: live-web-audit/1.0.0"
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": [
+      "Content-Type: text/html; charset=utf-8",
+      "Set-Cookie: sid=<redacted>; Path=/",
+      "Cache-Control: public, max-age=60",
+      "Date: Tue, 17 Nov 2026 14:10:11 GMT",
+      "Connection: keep-alive",
+      "Keep-Alive: timeout=5",
+      "Transfer-Encoding: chunked"
+    ],
+    "body_excerpt": "<html><body><h1>Coffee Shop</h1><a href=/admin>Admin</a><form action=/search><input name=q></form></body></html>",
+    "body_bytes": 112,
+    "truncated": false,
+    "content_type": "text/html; charset=utf-8"
+  },
+  "redirects": [],
+  "timings": {
+    "total_ms": 16
+  },
+  "notes": []
+}

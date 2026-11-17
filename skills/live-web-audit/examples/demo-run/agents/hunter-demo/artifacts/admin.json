@@ -1,0 +1,31 @@
+{
+  "capture_version": 1,
+  "label": "admin",
+  "observed_at": "2026-11-17T14:10:11Z",
+  "request": {
+    "method": "GET",
+    "url": "http://127.0.0.1:8787/admin",
+    "headers": [
+      "User-Agent: live-web-audit/1.0.0"
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": [
+      "Content-Type: text/html; charset=utf-8",
+      "Date: Tue, 17 Nov 2026 14:10:11 GMT",
+      "Connection: keep-alive",
+      "Keep-Alive: timeout=5",
+      "Transfer-Encoding: chunked"
+    ],
+    "body_excerpt": "<html><body><h1>Admin</h1><p>42 users, 7 refunds pending</p></body></html>",
+    "body_bytes": 74,
+    "truncated": false,
+    "content_type": "text/html; charset=utf-8"
+  },
+  "redirects": [],
+  "timings": {
+    "total_ms": 12
+  },
+  "notes": []
+}

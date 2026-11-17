@@ -1,0 +1,21 @@
+{
+  "run_id": "shop-example-com-run-1",
+  "target": "https://shop.example.com",
+  "repo": "shop-example-com",
+  "source_ref": "observed build: generator meta 4.2.0, asset hash 9f3c1a",
+  "profile": "standard",
+  "scope_paths": ["https://shop.example.com/", "https://api.example.com/v1/"],
+  "authorization": "owner-authorized test window, 2026-11-17T10:00Z to 12:00Z",
+  "budget": { "max_agents": 18, "max_requests": 400, "requests_per_second": 1 },
+  "execution_policy": "live-with-test-accounts",
+  "selected_companions": [
+    "TRANSPORT-AND-HEADERS.md",
+    "AUTH-AND-SESSION.md",
+    "ACCESS-CONTROL.md",
+    "INJECTION-AND-RENDERING.md",
+    "CACHE-AND-PROXY.md"
+  ],
+  "prior_runs": ["~/live-web-audit/shop.example.com/run-0"],
+  "shared_file_owners": ["parent"],
+  "run_status": "in_progress"
+}
